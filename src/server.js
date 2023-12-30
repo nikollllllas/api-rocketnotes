@@ -1,10 +1,12 @@
-require("express-async-errors")
+require('dotenv/config')
+require('express-async-errors')
+
 const cors = require('cors')
 const uploadConfig = require('./configs/upload')
-const runMigrations = require("./database/sqlite/migrations")
-const AppError = require("./utils/AppError")
-const express = require("express")
-const routes = require("./routes")
+const runMigrations = require('./database/sqlite/migrations')
+const AppError = require('./utils/AppError')
+const express = require('express')
+const routes = require('./routes')
 
 runMigrations()
 
@@ -16,10 +18,10 @@ app.use('/files', express.static(uploadConfig.UPLOADS_FOLDER))
 
 app.use(routes)
 
-app.use(( error, req, res, next ) => {
-  if(error instanceof AppError) {
+app.use((error, req, res, next) => {
+  if (error instanceof AppError) {
     return res.status(error.statusCode).json({
-      status: "error",
+      status: 'error',
       message: error.message
     })
   }
@@ -27,12 +29,12 @@ app.use(( error, req, res, next ) => {
   console.error(error)
 
   return res.status(500).json({
-    status: "error",
-    message: "Internal Server Error"
+    status: 'error',
+    message: 'Internal Server Error'
   })
 })
 
-const PORT = 3333
+const PORT = process.env.PORT || 3333
 app.listen(PORT, () => {
-  console.log("Running on port 3333")
+  console.log(`Running on port ${PORT}`)
 })
